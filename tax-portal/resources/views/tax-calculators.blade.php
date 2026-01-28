@@ -25,7 +25,8 @@
                     </svg>
                     <h5 class="fw-bold mt-3">Personal Income Tax</h5>
                     <p>Calculate your personal income tax easily.</p>
-                    <a href="#" class="stretched-link"></a>
+                    <a href="{{ route('tax.personal') }}" class="stretched-link"></a>
+
                 </div>
             </div>
 
@@ -37,7 +38,7 @@
                     </svg>
                     <h5 class="fw-bold mt-3">Business Tax</h5>
                     <p>Determine your business tax obligations quickly.</p>
-                    <a href="#" class="stretched-link"></a>
+                    <a href="{{ route('tax.business') }}" class="stretched-link"></a>
                 </div>
             </div>
 
@@ -49,7 +50,7 @@
                     </svg>
                     <h5 class="fw-bold mt-3">VAT / GST Calculator</h5>
                     <p>Compute VAT or GST quickly for products/services.</p>
-                    <a href="#" class="stretched-link"></a>
+                    <a href="{{ route('tax.vat') }}" class="stretched-link"></a>
                 </div>
             </div>
         </div>
