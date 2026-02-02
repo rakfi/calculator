@@ -1,9 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PersonalTaxController;
-use App\Http\Controllers\BusinessTaxController;
-use App\Http\Controllers\VatTaxController;
+use App\Http\Controllers\ApitSalaryController;
+use App\Http\Controllers\ApitBonusController;
+use App\Http\Controllers\TaxController;
+use App\Http\Controllers\EstimatedTaxController;
+use App\Http\Controllers\ServiceExportController;
+use App\Http\Controllers\VatController;
 
 // Home page
 Route::get('/', fn() => view('home'))->name('home');
@@ -29,14 +32,29 @@ Route::get('/contact', fn() => view('contact'))->name('contact');
 // Login page
 Route::get('/login', fn() => view('login'))->name('login');
 
-// Personal Tax Calculator routes
-Route::get('/tax-calculators/personal-tax', [PersonalTaxController::class, 'index'])->name('tax.personal');
-Route::post('/tax-calculators/personal-tax/calculate', [PersonalTaxController::class, 'calculate'])->name('tax.personal.calculate');
+//aPI T/PAYE Salary Tax Calculator routes
+Route::get('/tax-calculators/apit-salary-tax', [ApitSalaryController::class, 'index'])->name('tax.apit.salary');
+Route::post('/tax-calculators/apit-salary-tax/calculate', [ApitSalaryController::class, 'calculate'])->name('tax.apit.salary.calculate');
 
-// Business Tax Calculator routes
-Route::get('/tax-calculators/business-tax', [BusinessTaxController::class, 'index'])->name('tax.business');
-Route::post('/tax-calculators/business-tax/calculate', [BusinessTaxController::class, 'calculate'])->name('tax.business.calculate');
+// PDF Download for APIT/PAYE Salary Tax Calculation
+Route::get('/tax/apit/salary/pdf', [ApitSalaryController::class, 'downloadPdf'])->name('tax.apit.salary.pdf');
+
+// aPIT Bonus Tax Calculator routes
+Route::get('/tax-calculators/apit-bonus-tax', [ApitBonusController::class, 'index'])->name('tax.apit.bonus');
+Route::post('/tax-calculators/apit-bonus-tax/calculate', [ApitBonusController::class, 'calculate'])->name('tax.apit.bonus.calculate');
+
+// Annual Tax Calculator routes
+Route::get('/tax/annual', [TaxController::class, 'annualTax'])->name('tax.annual');
+Route::post('/tax/annual/calculate', [TaxController::class, 'annualTaxCalculate'])->name('tax.annual.calculate');
+
+// Estimated Tax Calculator routes
+Route::get('/tax/estimated', [EstimatedTaxController::class, 'index'])->name('tax.estimated');
+Route::post('/tax/estimated/calculate', [EstimatedTaxController::class, 'calculate'])->name('tax.estimated.calculate');
+
+// Service Export routes
+Route::get('/tax/service-exporter', [ServiceExportController::class, 'index'])->name('tax.service.exporter');
+Route::post('/tax/service-exporter/calculate', [ServiceExportController::class, 'calculate'])->name('tax.service.exporter.calculate');
 
 // VAT Calculator routes
-Route::get('/tax-calculators/vat-tax', [VatTaxController::class, 'index'])->name('tax.vat');
-Route::post('/tax-calculators/vat-tax/calculate', [VatTaxController::class, 'calculate'])->name('tax.vat.calculate');   
+Route::get('/tax/vat-calculator', [VatController::class, 'index'])->name('tax.vat');
+Route::post('/tax/vat-calculator/calculate', [VatController::class, 'calculate'])->name('tax.vat.calculate');   

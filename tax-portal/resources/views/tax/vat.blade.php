@@ -1,110 +1,83 @@
 @extends('layouts.main')
 
-@section('title', 'VAT / GST Calculator')
+@section('title', 'VAT Calculator')
 
 @section('content')
+<div class="container py-5">
+    <h2 class="mb-4">VAT Calculator</h2>
 
-<!-- Hero -->
-<section class="py-5 text-white text-center"
-         style="background: linear-gradient(135deg, #343a40, #6c757d);">
-    <div class="container">
-        <h1 class="fw-bold mb-2">VAT / GST Calculator</h1>
-        <p class="mb-0 opacity-75">Sri Lanka · Standard VAT 18%</p>
-    </div>
-</section>
+    <div class="row">
+        <!-- Input Form -->
+        <div class="col-md-4">
+            <div class="card p-3 mb-4">
+                <form action="{{ route('tax.vat.calculate') }}" method="POST">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Transaction Amount (LKR)</label>
+                        <input type="number" name="amount" id="amount" class="form-control" step="0.01" value="{{ old('amount') }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="vat_rate" class="form-label">VAT Rate (%)</label>
+                        <input type="number" name="vat_rate" id="vat_rate" class="form-control" step="0.01" value="{{ old('vat_rate', 15) }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100">Calculate VAT</button>
+                </form>
 
-<section class="container py-5">
-
-    <div class="row justify-content-center">
-        <div class="col-lg-6">
-
-            <!-- Calculator Card -->
-            <div class="card border-0 shadow-lg rounded-4">
-                <div class="card-body p-4 p-md-5">
-
-                    <h4 class="fw-bold text-center mb-4">
-                        🧾 VAT Calculation
-                    </h4>
-
-                    <form method="POST" action="{{ route('tax.vat.calculate') }}">
-                        @csrf
-
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold">
-                                Amount (LKR)
-                            </label>
-                            <div class="input-group input-group-lg">
-                                <span class="input-group-text bg-light">Rs.</span>
-                                <input type="number"
-                                       name="amount"
-                                       class="form-control"
-                                       placeholder="e.g. 100,000"
-                                       required
-                                       value="{{ old('amount') }}">
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold">
-                                Amount Type
-                            </label>
-                            <select name="vat_type" class="form-select form-select-lg" required>
-                                <option value="exclusive">
-                                    VAT Exclusive (Add VAT)
-                                </option>
-                                <option value="inclusive">
-                                    VAT Inclusive (Extract VAT)
-                                </option>
-                            </select>
-                        </div>
-
-                        <button class="btn btn-dark btn-lg w-100 rounded-pill">
-                            Calculate VAT
-                        </button>
-                    </form>
-
+                <div class="mt-3 text-muted">
+                    <p><strong>Category:</strong> Business Transaction / Services</p>
+                    <p><strong>VAT Rate:</strong> {{ old('vat_rate', 15) }}%</p>
                 </div>
             </div>
+        </div>
 
-            <!-- Results -->
-            @if(session('amount') !== null)
-                <div class="card border-0 shadow-sm mt-4 rounded-4">
-                    <div class="card-body p-4">
-
-                        <h5 class="fw-bold mb-3 text-center">
-                            📊 VAT Summary
-                        </h5>
-
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>Net Amount</span>
-                            <span class="fw-semibold">
-                                LKR {{ number_format(session('net'), 2) }}
-                            </span>
+        <!-- Result Section -->
+        <div class="col-md-8">
+            @if(session()->has('vat_amount'))
+            <div class="card p-3 mb-4">
+                <h5 class="mb-3">VAT Summary</h5>
+                <div class="row text-center mb-3">
+                    <div class="col">
+                        <div class="p-2 bg-light rounded">
+                            <small>Transaction Amount</small>
+                            <h6>LKR {{ number_format(session('amount'), 2) }}</h6>
                         </div>
-
-                        <div class="d-flex justify-content-between mb-2">
-                            <span>VAT ({{ session('rate') }}%)</span>
-                            <span class="fw-semibold text-danger">
-                                LKR {{ number_format(session('vat'), 2) }}
-                            </span>
+                    </div>
+                    <div class="col">
+                        <div class="p-2 bg-light rounded">
+                            <small>VAT Amount</small>
+                            <h6>LKR {{ number_format(session('vat_amount'), 2) }}</h6>
                         </div>
-
-                        <hr>
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="fw-bold">Total Amount</span>
-                            <span class="fw-bold fs-5 text-success">
-                                LKR {{ number_format(session('total'), 2) }}
-                            </span>
+                    </div>
+                    <div class="col">
+                        <div class="p-2 bg-light rounded">
+                            <small>Total Amount</small>
+                            <h6>LKR {{ number_format(session('total_amount'), 2) }}</h6>
                         </div>
-
                     </div>
                 </div>
-            @endif
 
+                <h6 class="mt-3">Calculation Details</h6>
+                <table class="table table-sm">
+                    <tr>
+                        <td>Transaction Amount</td>
+                        <td>LKR {{ number_format(session('amount'), 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td>VAT Rate</td>
+                        <td>{{ session('vat_rate') }}%</td>
+                    </tr>
+                    <tr>
+                        <td>VAT Amount</td>
+                        <td>LKR {{ number_format(session('vat_amount'), 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Total Amount</td>
+                        <td><strong>LKR {{ number_format(session('total_amount'), 2) }}</strong></td>
+                    </tr>
+                </table>
+            </div>
+            @endif
         </div>
     </div>
-
-</section>
-
+</div>
 @endsection

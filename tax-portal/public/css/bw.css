@@ -72,6 +72,73 @@ section.bg-light {
     margin-bottom: 20px;
 }
 
+.tax-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    height: 100%;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    transition: all 0.3s ease;
+}
+
+.tax-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+.tax-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: #e9ecef;
+    color: #000;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.tax-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 22px;
+    margin-top: 20px;
+}
+
+.tax-features {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0;
+}
+
+.tax-features li {
+    font-size: 14px;
+    margin-bottom: 8px;
+    position: relative;
+    padding-left: 20px;
+}
+
+.tax-features li::before {
+    content: "✔";
+    position: absolute;
+    left: 0;
+    color: #198754;
+    font-size: 12px;
+}
+
+.tax-footer {
+    margin-top: auto;
+    font-size: 14px;
+    color: #6c757d;
+}
+
+
 /* === CTA Section === */
 .cta-section {
     background-color: #000;
