@@ -42,7 +42,7 @@
         </div>
 
         <!-- RIGHT SIDE -->
-        @if(session('net_income'))
+        @if(session('service_export'))
         <div class="col-md-8">
 
             <!-- SUMMARY -->
@@ -54,7 +54,7 @@
                         <div class="p-3 bg-light rounded">
                             <small>Gross Income</small>
                             <h6>
-                                LKR {{ number_format(session('gross_income')) }}
+                                LKR {{ number_format(session('service_export.gross_income')) }}
                             </h6>
                         </div>
                     </div>
@@ -63,7 +63,7 @@
                         <div class="p-3 bg-light rounded">
                             <small>Net Taxable Income</small>
                             <h6>
-                                LKR {{ number_format(session('net_income')) }}
+                                LKR {{ number_format(session('service_export.net_income')) }}
                             </h6>
                         </div>
                     </div>
@@ -72,7 +72,7 @@
                         <div class="p-3 bg-light rounded">
                             <small>Annual Tax (15%)</small>
                             <h6 class="text-danger">
-                                LKR {{ number_format(session('tax')) }}
+                                LKR {{ number_format(session('service_export.tax')) }}
                             </h6>
                         </div>
                     </div>
@@ -86,21 +86,37 @@
                 <table class="table table-sm">
                     <tr>
                         <th>Gross Export Income</th>
-                        <td>LKR {{ number_format(session('gross_income')) }}</td>
+                        <td>
+                            LKR {{ number_format(session('service_export.gross_income')) }}
+                        </td>
                     </tr>
                     <tr>
                         <th>Less: Allowable Expenses</th>
-                        <td>LKR {{ number_format(session('expenses')) }}</td>
+                        <td>
+                            LKR {{ number_format(session('service_export.expenses')) }}
+                        </td>
                     </tr>
                     <tr class="fw-bold">
                         <th>Net Taxable Income</th>
-                        <td>LKR {{ number_format(session('net_income')) }}</td>
+                        <td>
+                            LKR {{ number_format(session('service_export.net_income')) }}
+                        </td>
                     </tr>
                     <tr class="fw-bold text-danger">
                         <th>Tax @ 15%</th>
-                        <td>LKR {{ number_format(session('tax')) }}</td>
+                        <td>
+                            LKR {{ number_format(session('service_export.tax')) }}
+                        </td>
                     </tr>
                 </table>
+            </div>
+
+            <!-- DOWNLOAD PDF -->
+            <div class="card shadow-sm p-3 mt-3 text-center">
+                <a href="{{ route('tax.service.exporter.pdf') }}"
+                   class="btn btn-outline-dark">
+                    Download Calculation as PDF
+                </a>
             </div>
 
         </div>

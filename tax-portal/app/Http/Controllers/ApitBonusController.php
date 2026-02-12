@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 class ApitBonusController extends Controller
 {
     public function index()
@@ -13,24 +13,24 @@ class ApitBonusController extends Controller
 
     private function annualTax($annualIncome)
     {
-        $slabs = [
-            [1200000, 0],
-            [500000, 6],
-            [500000, 12],
-            [500000, 18],
-            [500000, 24],
-            [INF, 30],
-        ];
+         $slabs = DB::table('apit_salary')
+        ->orderBy('id')
+        ->get();
+       
 
         $remaining = $annualIncome;
         $tax = 0;
 
-        foreach ($slabs as [$limit, $rate]) {
+        foreach ($slabs as $slab) {
             if ($remaining <= 0) break;
-
-            $taxable = min($remaining, $limit);
-            $tax += ($taxable * $rate) / 100;
+    // NULL = unlimited slab
+        $taxable = is_null($slab->limit)
+            ? $remaining
+            : min($remaining, (float) $slab->limit
+        );
+            $tax += ($taxable * $slab->percentage) / 100;
             $remaining -= $taxable;
+            $taxable = min($remaining, $slab->limit);
         }
 
         return $tax;
@@ -48,12 +48,15 @@ class ApitBonusController extends Controller
 
         $bonusTax = $taxWithBonus - $taxWithoutBonus;
 
-        return back()->with([
-            'annual_salary' => $annualSalary,
-            'bonus' => $bonus,
-            'tax_without_bonus' => $taxWithoutBonus,
-            'tax_with_bonus' => $taxWithBonus,
-            'bonus_tax' => max($bonusTax, 0),
+        session([
+            'apit_bonus' => [
+                'annual_salary'     => $annualSalary,
+                'bonus'             => $bonus,
+                'tax_without_bonus' => $taxWithoutBonus,
+                'tax_with_bonus'    => $taxWithBonus,
+                'bonus_tax'         => $bonusTax,
+            ]
         ]);
+        return back();
     }
 }

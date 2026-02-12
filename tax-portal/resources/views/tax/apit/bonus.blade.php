@@ -36,7 +36,7 @@
         </div>
 
         <!-- RIGHT SIDE -->
-        @if(session('bonus_tax'))
+        @if(session('apit_bonus'))
         <div class="col-md-8">
 
             <div class="card shadow-sm p-4 mb-4">
@@ -46,14 +46,14 @@
                     <div class="col-md-4">
                         <div class="p-3 bg-light rounded">
                             <small>Annual Salary</small>
-                            <h6>LKR {{ number_format(session('annual_salary')) }}</h6>
+                            <h6>LKR {{ number_format(session('apit_bonus.annual_salary')) }}</h6>
                         </div>
                     </div>
 
                     <div class="col-md-4">
                         <div class="p-3 bg-light rounded">
                             <small>Bonus</small>
-                            <h6>LKR {{ number_format(session('bonus')) }}</h6>
+                            <h6>LKR {{ number_format(session('apit_bonus.bonus')) }}</h6>
                         </div>
                     </div>
 
@@ -61,7 +61,7 @@
                         <div class="p-3 bg-light rounded">
                             <small>Bonus Tax</small>
                             <h6 class="text-danger">
-                                LKR {{ number_format(session('bonus_tax')) }}
+                                LKR {{ number_format(session('apit_bonus.bonus_tax')) }}
                             </h6>
                         </div>
                     </div>
@@ -74,15 +74,15 @@
                 <table class="table table-sm">
                     <tr>
                         <th>Tax on Salary Only</th>
-                        <td>LKR {{ number_format(session('tax_without_bonus')) }}</td>
+                        <td>LKR {{ number_format(session('apit_bonus.tax_without_bonus')) }}</td>
                     </tr>
                     <tr>
                         <th>Tax on Salary + Bonus</th>
-                        <td>LKR {{ number_format(session('tax_with_bonus')) }}</td>
+                        <td>LKR {{ number_format(session('apit_bonus.tax_with_bonus')) }}</td>
                     </tr>
                     <tr class="fw-bold">
                         <th>Bonus APIT</th>
-                        <td>LKR {{ number_format(session('bonus_tax')) }}</td>
+                        <td>LKR {{ number_format(session('apit_bonus.bonus_tax')) }}</td>
                     </tr>
                 </table>
             </div>

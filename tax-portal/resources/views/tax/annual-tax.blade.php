@@ -31,9 +31,10 @@
         </div>
 
         <!-- RIGHT -->
-        @if(session()->has('annual_income'))
+        @if(session()->has('annual_tax'))
         <div class="col-md-8">
 
+            <!-- SUMMARY -->
             <div class="card shadow-sm p-4 mb-4">
                 <h5 class="fw-bold">Tax Summary</h5>
 
@@ -41,7 +42,9 @@
                     <div class="col-md-6">
                         <div class="p-3 bg-light rounded">
                             <small>Annual Income</small>
-                            <h6>LKR {{ number_format(session('annual_income')) }}</h6>
+                            <h6>
+                                LKR {{ number_format(session('annual_tax.annual_income')) }}
+                            </h6>
                         </div>
                     </div>
 
@@ -49,13 +52,14 @@
                         <div class="p-3 bg-light rounded">
                             <small>Total Tax</small>
                             <h6 class="text-danger">
-                                LKR {{ number_format(session('annual_tax')) }}
+                                LKR {{ number_format(session('annual_tax.total_tax')) }}
                             </h6>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- BREAKDOWN -->
             <div class="card shadow-sm p-4">
                 <h6 class="fw-bold mb-3">Tax Breakdown</h6>
 
@@ -68,7 +72,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach(session('breakdown') as $row)
+                        @foreach(session('annual_tax.breakdown') as $row)
                         <tr>
                             <td>{{ $row['rate'] }}%</td>
                             <td>LKR {{ number_format($row['taxable']) }}</td>
@@ -77,7 +81,9 @@
                         @endforeach
                         <tr class="fw-bold">
                             <td colspan="2">Total Tax</td>
-                            <td>LKR {{ number_format(session('annual_tax')) }}</td>
+                            <td>
+                                LKR {{ number_format(session('annual_tax.total_tax')) }}
+                            </td>
                         </tr>
                     </tbody>
                 </table>

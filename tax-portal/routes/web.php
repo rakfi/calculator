@@ -32,16 +32,23 @@ Route::get('/contact', fn() => view('contact'))->name('contact');
 // Login page
 Route::get('/login', fn() => view('login'))->name('login');
 
-//aPI T/PAYE Salary Tax Calculator routes
+Route::get('/admin', fn() => view('admin.dashboard'))->name('dashboard');
+Route::get('/admin/calculators/regular_salary', [ApitSalaryController::class, 'editRates']);
+Route::post('/admin/calculators/regular_salary/{id}', [ApitSalaryController::class, 'updateRates']);
+Route::get('/admin/calculators/annual_income', [TaxController::class, 'editRates']);
+Route::post('/admin/calculators/annual_income/{id}', [TaxController::class, 'updateRates']);
+
 Route::get('/tax-calculators/apit-salary-tax', [ApitSalaryController::class, 'index'])->name('tax.apit.salary');
 Route::post('/tax-calculators/apit-salary-tax/calculate', [ApitSalaryController::class, 'calculate'])->name('tax.apit.salary.calculate');
+// PDF Download for aPIT Salary Tax Calculation
+Route::get('/tax-calculators/apit-salary-tax/pdf', [ApitSalaryController::class, 'downloadPdf'])->name('tax.apit.salary.pdf');
 
-// PDF Download for APIT/PAYE Salary Tax Calculation
-Route::get('/tax/apit/salary/pdf', [ApitSalaryController::class, 'downloadPdf'])->name('tax.apit.salary.pdf');
 
 // aPIT Bonus Tax Calculator routes
 Route::get('/tax-calculators/apit-bonus-tax', [ApitBonusController::class, 'index'])->name('tax.apit.bonus');
 Route::post('/tax-calculators/apit-bonus-tax/calculate', [ApitBonusController::class, 'calculate'])->name('tax.apit.bonus.calculate');
+// PDF Download for aPIT Bonus Tax Calculation
+Route::get('/tax-calculators/apit-bonus-tax/pdf', [ApitBonusController::class, 'downloadPdf'])->name('tax.apit.bonus.pdf'); 
 
 // Annual Tax Calculator routes
 Route::get('/tax/annual', [TaxController::class, 'annualTax'])->name('tax.annual');
@@ -54,6 +61,8 @@ Route::post('/tax/estimated/calculate', [EstimatedTaxController::class, 'calcula
 // Service Export routes
 Route::get('/tax/service-exporter', [ServiceExportController::class, 'index'])->name('tax.service.exporter');
 Route::post('/tax/service-exporter/calculate', [ServiceExportController::class, 'calculate'])->name('tax.service.exporter.calculate');
+// PDF Download for Service Exporter Tax Calculation
+Route::get('/tax/service-exporter/pdf', [ServiceExportController::class, 'downloadPdf'])->name('tax.service.exporter.pdf');
 
 // VAT Calculator routes
 Route::get('/tax/vat-calculator', [VatController::class, 'index'])->name('tax.vat');

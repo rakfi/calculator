@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use Illuminate\Support\Facades\DB;
 
 class ApitSalaryController extends Controller
 {
@@ -12,66 +12,97 @@ class ApitSalaryController extends Controller
     {
         return view('tax.apit.salary');
     }
+public function editRates()
+{
+    $slabs = DB::table('apit_salary')
+        ->orderBy('id')
+        ->get();
 
+    return view('admin.calculators.regular_salary', compact('slabs'));
+}
+
+public function updateRates(Request $request, $id)
+{
+    $request->validate([
+        'percentage' => 'required|numeric|min:0|max:100',
+    ]);
+
+    DB::table('apit_salary')
+        ->where('id', $id)
+        ->update([
+            'percentage' => $request->percentage,
+        ]);
+
+    return back()->with('success', 'Tax rate updated successfully');
+}
     public function calculate(Request $request)
-    {
-        $monthlyIncome = $request->monthly_income;
-        $annualIncome  = $monthlyIncome * 12;
+{
+    $monthlyIncome = (float) $request->monthly_income;
+    $annualIncome  = $monthlyIncome * 12;
 
-        $slabs = [
-            [1200000, 0],
-            [500000, 6],
-            [500000, 12],
-            [500000, 18],
-            [500000, 24],
-            [INF, 30],
+    $slabs = DB::table('apit_salary')
+        ->orderBy('id')
+        ->get();
+
+    $remaining = $annualIncome;
+    $tax = 0;
+    $breakdown = [];
+
+    foreach ($slabs as $slab) {
+
+        if ($remaining <= 0) {
+            break;
+        }
+
+        // NULL = unlimited slab
+        $taxable = is_null($slab->limit)
+            ? $remaining
+            : min($remaining, (float) $slab->limit
+        );
+
+        $taxAmount = ($taxable * $slab->percentage) / 100;
+
+        $breakdown[] = [
+            'rate'    => $slab->percentage,
+            'taxable'=> $taxable,
+            'tax'     => $taxAmount,
         ];
 
-        $remaining = $annualIncome;
-        $tax = 0;
-        $breakdown = [];
+        $tax += $taxAmount;
+        $remaining -= $taxable;
+    }
 
-        foreach ($slabs as [$limit, $rate]) {
-            if ($remaining <= 0) break;
-
-            $taxable = min($remaining, $limit);
-            $taxAmount = ($taxable * $rate) / 100;
-
-            $breakdown[] = [
-                'rate' => $rate,
-                'taxable' => $taxable,
-                'tax' => $taxAmount,
-            ];
-
-            $tax += $taxAmount;
-            $remaining -= $taxable;
-        }
-
-        return back()->with([
+    session([
+        'apit_salary' => [
             'monthly_income' => $monthlyIncome,
-            'annual_income' => $annualIncome,
-            'annual_tax' => $tax,
-            'monthly_tax' => $tax / 12,
-            'breakdown' => $breakdown,
-        ]);
-    }
+            'annual_income'  => $annualIncome,
+            'annual_tax'     => round($tax, 2),
+            'monthly_tax'    => round($tax / 12, 2),
+            'breakdown'      => $breakdown,
+        ]
+    ]);
+
+    return back();
+}
+
     public function downloadPdf()
-    {
-        $data = session()->all();
+{
+    $apitSalary = session('apit_salary');
 
-        if (!isset($data['annual_income'])) {
-            return redirect()->route('tax.apit.salary');
-        }
-
-        $pdf = Pdf::loadView('pdf.apit-salary', [
-            'monthly_income' => $data['monthly_income'],
-            'annual_income'  => $data['annual_income'],
-            'annual_tax'     => $data['annual_tax'],
-            'monthly_tax'    => $data['monthly_tax'],
-            'breakdown'      => $data['breakdown'],
-        ]);
-
-        return $pdf->download('APIT_Salary_Tax_Report_2025_26.pdf');
+    if (!$apitSalary) {
+        return redirect()->route('tax.apit.salary');
     }
+
+    $pdf = Pdf::loadView('pdf.apit-salary', [
+        'monthly_income' => $apitSalary['monthly_income'],
+        'annual_income'  => $apitSalary['annual_income'],
+        'annual_tax'     => $apitSalary['annual_tax'],
+        'monthly_tax'    => $apitSalary['monthly_tax'],
+        'breakdown'      => $apitSalary['breakdown'],
+    ]);
+
+    return $pdf->download('APIT_Salary_Tax_Report_2025_26.pdf');
+}
+
 
 }
