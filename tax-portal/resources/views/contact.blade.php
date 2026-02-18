@@ -8,7 +8,7 @@
 <section class="hero-section text-center">
     <div class="container">
         <h1 class="hero-title">Get In Touch</h1>
-        <p class="hero-subtitle">We are ready to assist you. Reach out to CONSULT for professional support.</p>
+        <p class="hero-subtitle">We are ready to assist you. Reach out to SIYENRO for professional support.</p>
     </div>
 </section>
 

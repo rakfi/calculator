@@ -18,6 +18,9 @@
                     <a class="nav-link {{ request()->routeIs('services') ? 'active fw-bold' : '' }}" href="{{ route('services') }}">Services</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('payroll.calculators') ? 'active fw-bold' : '' }}" href="{{ route('payroll.calculators') }}">Payroll Calculators</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('tax.calculators') ? 'active fw-bold' : '' }}" href="{{ route('tax.calculators') }}">Tax Calculators</a>
                 </li>
                 <li class="nav-item dropdown">

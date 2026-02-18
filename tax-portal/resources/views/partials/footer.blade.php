@@ -3,7 +3,7 @@
         <div class="row gy-4">
             <!-- Logo & About -->
             <div class="col-md-4" data-aos="fade-up">
-                <h5 class="fw-bold mb-3">CONSULT</h5>
+                <h5 class="fw-bold mb-3">SIYENRO</h5>
                 <p>Professional consulting, tax services, and financial guidance for modern businesses.</p>
                 <div class="social-icons mt-3">
                     <a href="#" class="text-white me-3"><i class="bi bi-facebook fs-5"></i></a>
@@ -30,14 +30,14 @@
                 <h5 class="fw-bold mb-3">Contact</h5>
                 <p class="mb-1"><i class="bi bi-geo-alt-fill me-2"></i>123 Business St, City, Country</p>
                 <p class="mb-1"><i class="bi bi-telephone-fill me-2"></i>+123 456 7890</p>
-                <p class="mb-1"><i class="bi bi-envelope-fill me-2"></i>info@consult.com</p>
+                <p class="mb-1"><i class="bi bi-envelope-fill me-2"></i>info@siyenro.com</p>
             </div>
         </div>
 
         <hr class="mt-4" style="border-color: rgba(255,255,255,0.1);">
 
         <div class="text-center mt-3">
-            <p class="mb-0">&copy; {{ date('Y') }} CONSULT. All Rights Reserved.</p>
+            <p class="mb-0">&copy; {{ date('Y') }} SIYENRO. All Rights Reserved.</p>
         </div>
     </div>
 </footer>

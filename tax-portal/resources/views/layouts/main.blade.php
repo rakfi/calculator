@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>@yield('title','CONSULT')</title>
+    <title>@yield('title','SIYENRO')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Google Fonts: Poppins for headings, Roboto for body -->

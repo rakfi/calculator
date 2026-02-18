@@ -24,7 +24,7 @@
                 <div class="overlay position-absolute top-0 start-0 w-100 h-100"></div>
                 <div class="container d-flex justify-content-center align-items-center h-100 position-relative">
                     <div class="text-center text-white hero-content" data-aos="fade-up">
-                        <h1 class="display-3 fw-bold mb-3">Grow Your Business with CONSULT</h1>
+                        <h1 class="display-3 fw-bold mb-3">Grow Your Business with SIYENRO</h1>
                         <p class="lead mb-4">Professional consulting, tax services, and financial guidance for modern businesses.</p>
                         <a href="{{ route('contact') }}" class="btn btn-light btn-lg rounded-pill fw-semibold px-5">Get Started</a>
                     </div>
@@ -45,7 +45,7 @@
         <div class="row align-items-center">
             <div class="col-lg-6" data-aos="fade-right" data-aos-delay="200">
                 <h2 class="fw-bold mb-3">Who We Are</h2>
-                <p>CONSULT combines industry expertise with tailored strategies to help businesses thrive. From taxation to financial planning and strategic consulting, we deliver results‑driven solutions.</p>
+                <p>SIYENRO combines industry expertise with tailored strategies to help businesses thrive. From taxation to financial planning and strategic consulting, we deliver results-driven solutions.</p>
                 <a href="{{ route('about') }}" class="btn btn-outline-dark rounded-pill fw-semibold px-4 mt-3" data-aos="fade-up" data-aos-delay="400">Learn More</a>
             </div>
             <div class="col-lg-6 text-center" data-aos="fade-left" data-aos-delay="300">

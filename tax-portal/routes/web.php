@@ -1,12 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ApitSalaryController;
-use App\Http\Controllers\ApitBonusController;
-use App\Http\Controllers\TaxController;
-use App\Http\Controllers\EstimatedTaxController;
-use App\Http\Controllers\ServiceExportController;
-use App\Http\Controllers\VatController;
+use App\Http\Controllers\Tax\ApitSalaryController;
+use App\Http\Controllers\Tax\ApitBonusController;
+use App\Http\Controllers\Tax\AnnualTaxController;
+use App\Http\Controllers\Tax\EstimatedTaxController;
+use App\Http\Controllers\Tax\ServiceExportController;
+use App\Http\Controllers\Tax\VatController;
 
 // Home page
 Route::get('/', fn() => view('home'))->name('home');
@@ -19,6 +19,7 @@ Route::get('/services', fn() => view('services'))->name('services');
 
 // Tax Calculators page
 Route::get('/tax-calculators', fn() => view('tax-calculators'))->name('tax.calculators');
+
 
 // News page
 Route::get('/news', fn() => view('news'))->name('news');
@@ -36,8 +37,8 @@ Route::get('/admin', fn() => view('admin.dashboard'))->name('dashboard');
 Route::get('/admin/dashboard', fn() => view('admin.dashboard'))->name('admin.dashboard');
 Route::get('/admin/calculators/regular_salary', [ApitSalaryController::class, 'editRates']);
 Route::post('/admin/calculators/regular_salary/{id}', [ApitSalaryController::class, 'updateRates']);
-Route::get('/admin/calculators/annual_income', [TaxController::class, 'editRates']);
-Route::post('/admin/calculators/annual_income/{id}', [TaxController::class, 'updateRates']);
+Route::get('/admin/calculators/annual_income', [AnnualTaxController::class, 'editRates']);
+Route::post('/admin/calculators/annual_income/{id}', [AnnualTaxController::class, 'updateRates']);
 Route::get('/admin/calculators/service_export', [ServiceExportController::class, 'editRates']);
 Route::post('/admin/calculators/service_export/{id}', [ServiceExportController::class, 'updateRates']);
 Route::get('/admin/calculators/estimated_tax', [EstimatedTaxController::class, 'editRates']);
@@ -58,10 +59,10 @@ Route::post('/tax-calculators/apit-bonus-tax/calculate', [ApitBonusController::c
 Route::get('/tax-calculators/apit-bonus-tax/pdf', [ApitBonusController::class, 'downloadPdf'])->name('tax.apit.bonus.pdf'); 
 
 // Annual Tax Calculator routes
-Route::get('/tax/annual', [TaxController::class, 'annualTax'])->name('tax.annual');
-Route::post('/tax/annual/calculate', [TaxController::class, 'annualTaxCalculate'])->name('tax.annual.calculate');
+Route::get('/tax/annual', [AnnualTaxController::class, 'annualTax'])->name('tax.annual');
+Route::post('/tax/annual/calculate', [AnnualTaxController::class, 'annualTaxCalculate'])->name('tax.annual.calculate');
 // PDF Download for Annual Tax Calculation
-Route::get('/tax/annual/pdf', [TaxController::class, 'downloadPdf'])->name('tax.annual.pdf');
+Route::get('/tax/annual/pdf', [AnnualTaxController::class, 'downloadPdf'])->name('tax.annual.pdf');
 
 
 // Estimated Tax Calculator routes
@@ -85,3 +86,5 @@ Route::get('/tax/vat-calculator', [VatController::class, 'index'])->name('tax.va
 Route::post('/tax/vat-calculator/calculate', [VatController::class, 'calculate'])->name('tax.vat.calculate'); 
 // PDF Download for VAT Calculation
 Route::get('/tax/vat-calculator/pdf', [VatController::class, 'downloadPdf'])->name('tax.vat.pdf');  
+
+require __DIR__ . '/payroll.php';

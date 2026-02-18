@@ -51,3 +51,10 @@
                     <h5 class="fw-bold mt-3">Financial Planning</h5>
                     <p>Learn how to plan your finances for long-term success.</p>
                     <a href="#" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@endsection
