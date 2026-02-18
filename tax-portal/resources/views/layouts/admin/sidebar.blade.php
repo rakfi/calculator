@@ -70,7 +70,18 @@
                       <p>Estimated Tax Calculator</p>
                     </a>
                   </li>
+                </ul>
+              </li>
 
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-briefcase"></i>
+                  <p>
+                    Payroll Calculators
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
                   <li class="nav-item">
                     <a href="/admin/calculators/salary_slip" class="nav-link">
                       <i class="nav-icon bi bi-circle"></i>
@@ -89,9 +100,6 @@
                       <p>Gratuity Calculator</p>
                     </a>
                   </li>
-                  
-                 
-                  
                 </ul>
               </li>
               

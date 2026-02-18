@@ -33,13 +33,15 @@ Route::post('/tax/epf-etf/calculate', [EpfEtfController::class, 'calculate'])->n
 Route::get('/tax/epf-etf/pdf', [EpfEtfController::class, 'downloadPdfFromSession'])->name('tax.epf.pdf');
 
 // Admin settings for salary slip
-Route::get('/admin/calculators/salary_slip', [PayrollController::class, 'settingsEdit'])->name('admin.salary_slip.settings');
-Route::post('/admin/calculators/salary_slip', [PayrollController::class, 'settingsUpdate'])->name('admin.salary_slip.settings.update');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/admin/calculators/salary_slip', [PayrollController::class, 'settingsEdit'])->name('admin.salary_slip.settings');
+    Route::post('/admin/calculators/salary_slip', [PayrollController::class, 'settingsUpdate'])->name('admin.salary_slip.settings.update');
 
-// Admin settings for EPF/ETF
-Route::get('/admin/calculators/epf_etf', [EpfEtfController::class, 'settingsEdit'])->name('admin.epf.settings');
-Route::post('/admin/calculators/epf_etf', [EpfEtfController::class, 'settingsUpdate'])->name('admin.epf.settings.update');
+    // Admin settings for EPF/ETF
+    Route::get('/admin/calculators/epf_etf', [EpfEtfController::class, 'settingsEdit'])->name('admin.epf.settings');
+    Route::post('/admin/calculators/epf_etf', [EpfEtfController::class, 'settingsUpdate'])->name('admin.epf.settings.update');
 
-// Admin settings for Gratuity
-Route::get('/admin/calculators/gratuity', [GratuityController::class, 'settingsEdit'])->name('admin.gratuity.settings');
-Route::post('/admin/calculators/gratuity', [GratuityController::class, 'settingsUpdate'])->name('admin.gratuity.settings.update');
+    // Admin settings for Gratuity
+    Route::get('/admin/calculators/gratuity', [GratuityController::class, 'settingsEdit'])->name('admin.gratuity.settings');
+    Route::post('/admin/calculators/gratuity', [GratuityController::class, 'settingsUpdate'])->name('admin.gratuity.settings.update');
+});
