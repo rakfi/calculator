@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-3" style="backdrop-filter: blur(8px);">
     <div class="container">
-        <a class="navbar-brand fw-bold fs-4 text-black" href="{{ route('home') }}">CONSULT</a>
+        <a class="navbar-brand fw-bold fs-4 text-black" href="{{ route('home') }}"><img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="img-fluid" style="max-height: 120px; width: 160px;"></a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
