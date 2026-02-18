@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 class ApitBonusController extends Controller
 {
     public function index()
@@ -59,4 +60,23 @@ class ApitBonusController extends Controller
         ]);
         return back();
     }
+    public function downloadPdf()
+{
+    $apitBonus = session('apit_bonus');
+
+    if (!$apitBonus) {
+        return redirect()->route('tax.apit.bonus');
+    }
+
+    $pdf = Pdf::loadView('pdf.apit-bonus', [
+        'annual_salary'     => $apitBonus['annual_salary'],
+        'bonus'             => $apitBonus['bonus'],
+        'tax_without_bonus' => $apitBonus['tax_without_bonus'],
+        'tax_with_bonus'    => $apitBonus['tax_with_bonus'],
+        'bonus_tax'         => $apitBonus['bonus_tax'],
+    ]);
+
+    return $pdf->download('APIT_Bonus_Tax_Report_2025_26.pdf');
+}
+
 }

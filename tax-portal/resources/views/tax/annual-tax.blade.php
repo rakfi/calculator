@@ -6,18 +6,22 @@
 <div class="container py-5">
     <div class="row g-4">
 
-        <!-- LEFT -->
+        <!-- LEFT SIDE - FORM -->
         <div class="col-md-4">
             <div class="card shadow-sm p-4">
                 <h5 class="fw-bold mb-3">Annual Income Tax</h5>
 
                 <form method="POST" action="{{ route('tax.annual.calculate') }}">
                     @csrf
-                    <label class="form-label">Annual Income (LKR)</label>
-                    <input type="number" class="form-control mb-3"
-                           name="annual_income" required>
 
-                    <button class="btn btn-dark w-100">
+                    <label class="form-label">Annual Income (LKR)</label>
+                    <input type="number"
+                           class="form-control mb-3"
+                           name="annual_income"
+                           placeholder="Enter your annual income"
+                           required>
+
+                    <button type="submit" class="btn btn-dark w-100">
                         Calculate Tax
                     </button>
                 </form>
@@ -30,11 +34,11 @@
             </div>
         </div>
 
-        <!-- RIGHT -->
+        <!-- RIGHT SIDE - RESULTS -->
         @if(session()->has('annual_tax'))
         <div class="col-md-8">
 
-            <!-- SUMMARY -->
+            <!-- TAX SUMMARY -->
             <div class="card shadow-sm p-4 mb-4">
                 <h5 class="fw-bold">Tax Summary</h5>
 
@@ -42,7 +46,7 @@
                     <div class="col-md-6">
                         <div class="p-3 bg-light rounded">
                             <small>Annual Income</small>
-                            <h6>
+                            <h6 class="fw-bold">
                                 LKR {{ number_format(session('annual_tax.annual_income')) }}
                             </h6>
                         </div>
@@ -51,7 +55,7 @@
                     <div class="col-md-6">
                         <div class="p-3 bg-light rounded">
                             <small>Total Tax</small>
-                            <h6 class="text-danger">
+                            <h6 class="fw-bold text-danger">
                                 LKR {{ number_format(session('annual_tax.total_tax')) }}
                             </h6>
                         </div>
@@ -59,34 +63,45 @@
                 </div>
             </div>
 
-            <!-- BREAKDOWN -->
+            <!-- TAX BREAKDOWN -->
             <div class="card shadow-sm p-4">
                 <h6 class="fw-bold mb-3">Tax Breakdown</h6>
 
-                <table class="table table-sm">
-                    <thead>
-                        <tr>
-                            <th>Rate</th>
-                            <th>Taxable Amount</th>
-                            <th>Tax</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach(session('annual_tax.breakdown') as $row)
-                        <tr>
-                            <td>{{ $row['rate'] }}%</td>
-                            <td>LKR {{ number_format($row['taxable']) }}</td>
-                            <td>LKR {{ number_format($row['tax']) }}</td>
-                        </tr>
-                        @endforeach
-                        <tr class="fw-bold">
-                            <td colspan="2">Total Tax</td>
-                            <td>
-                                LKR {{ number_format(session('annual_tax.total_tax')) }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Rate</th>
+                                <th>Taxable Amount</th>
+                                <th>Tax</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(session('annual_tax.breakdown') as $row)
+                            <tr>
+                                <td>{{ $row['rate'] }}%</td>
+                                <td>LKR {{ number_format($row['taxable']) }}</td>
+                                <td>LKR {{ number_format($row['tax']) }}</td>
+                            </tr>
+                            @endforeach
+
+                            <tr class="fw-bold">
+                                <td colspan="2">Total Tax</td>
+                                <td>
+                                    LKR {{ number_format(session('annual_tax.total_tax')) }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- DOWNLOAD PDF BUTTON -->
+            <div class="card shadow-sm p-3 mt-3 text-center">
+                <a href="{{ route('tax.annual.pdf') }}"
+                   class="btn btn-outline-dark px-4">
+                    Download Calculation as PDF
+                </a>
             </div>
 
         </div>

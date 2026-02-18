@@ -7,7 +7,7 @@
             <!--begin::Brand Image-->
             <img
               src="../assets/img/AdminLTELogo.png"
-              alt="AdminLTE Logo"
+              alt="Logo"
               class="brand-image opacity-75 shadow"
             />
             <!--end::Brand Image-->
@@ -59,35 +59,20 @@
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/admin/gentral/users" class="nav-link">
+                    <a href="/admin/calculators/service_export" class="nav-link">
                       <i class="nav-icon bi bi-circle"></i>
-                      <p>User Management</p>
+                      <p>Service Export Income Tax</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="/admin/gentral/appointments" class="nav-link">
+                    <a href="/admin/calculators/estimated_tax" class="nav-link">
                       <i class="nav-icon bi bi-circle"></i>
-                      <p>Appointment Management</p>
+                      <p>Estimated Tax Calculator</p>
                     </a>
                   </li>
-                  <li class="nav-item">
-                    <a href="/admin/gentral/progress" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Progress Tracking</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="/admin/gentral/notifications" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Notifications</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="/admin/gentral/reports" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p> Reports and Audit</p>
-                    </a>
-                  </li>
+                  
+                 
+                  
                 </ul>
               </li>
               

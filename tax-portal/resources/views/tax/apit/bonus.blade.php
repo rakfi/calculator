@@ -86,8 +86,15 @@
                     </tr>
                 </table>
             </div>
-
+ <!-- DOWNLOAD PDF -->
+            <div class="card shadow-sm p-3 mt-3 text-center">
+                <a href="{{ route('tax.apit.bonus.pdf') }}"
+                   class="btn btn-outline-dark">
+                    Download Calculation as PDF
+                </a>
+            </div>
         </div>
+        
         @endif
 
     </div>

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
+use Illuminate\Support\Facades\DB;
+
 class ServiceExportController extends Controller
 {
     /**
@@ -14,34 +16,97 @@ class ServiceExportController extends Controller
     {
         return view('tax.service-exporter');
     }
+public function editRates()
+{
+    $slabs = DB::table('export_income_tax_slabs')
+        ->orderByRaw('income_limit IS NULL, income_limit ASC')
+        ->get();
 
+    return view('admin.calculators.service_export', compact('slabs'));
+}
+
+public function updateRates(Request $request, $id)
+{
+    
+    $request->validate([
+        'percentage' => 'required|numeric|min:0|max:100',
+    ]);
+
+    DB::table('export_income_tax_slabs')
+        ->where('id', $id)
+        ->update([
+            'percentage' => $request->percentage,
+        ]);
+
+    return back()->with('success', 'Service export tax rate updated successfully');
+}
     /**
      * Calculate Individual Service Exporter tax
      */
     public function calculate(Request $request)
     {
         $request->validate([
-            'export_income' => 'required|numeric|min:0',
-            'expenses' => 'nullable|numeric|min:0',
-        ]);
+        'monthly_usd'     => 'required|numeric|min:0',
+        'conversion_rate' => 'required|numeric|min:0'
+    ]);
 
-        $gross = $request->export_income;
-        $expenses = $request->expenses ?? 0;
+    $monthlyUsd = (float) $request->monthly_usd;
+    $rate       = (float) $request->conversion_rate;
 
-        $netIncome = max(0, $gross - $expenses);
+    // 🔹 Convert USD → LKR
+    $monthlyLkr  = $monthlyUsd * $rate;
+    $annualGross = $monthlyLkr * 12;
 
-        // Preferential tax rate for Service Exporters (example: 15%)
-        $taxRate = 0.15;
-        $tax = $netIncome * $taxRate;
-        session([
-            'service_export' => [
-                'gross_income' => $gross,
-                'expenses' => $expenses,
-                'net_income' => $netIncome,
-                'tax' => $tax,
-            ]
-        ]);
-        return back();
+    $remaining = $annualGross;
+    $previousLimit = 0;
+    $totalTax = 0;
+    $breakdown = [];
+
+    $slabs = DB::table('export_income_tax_slabs')
+            ->orderByRaw('income_limit IS NULL, income_limit ASC')
+            ->get();
+
+
+    foreach ($slabs as $slab) {
+
+        if ($remaining <= 0) break;
+
+        if (is_null($slab->income_limit)) {
+            $taxable = $remaining;
+            $rangeText = "Above LKR " . number_format($previousLimit);
+        } else {
+            $rangeAmount = $slab->income_limit - $previousLimit;
+            $taxable = min($remaining, $rangeAmount);
+
+            $rangeText = "Up to LKR " . number_format($slab->income_limit);
+        }
+
+        $tax = round($taxable * ($slab->percentage / 100), 2);
+
+        $breakdown[] = [
+            'range'    => $rangeText,
+            'rate'     => $slab->percentage,
+            'taxable'  => $taxable,
+            'tax'      => $tax,
+        ];
+
+        $totalTax += $tax;
+        $remaining -= $taxable;
+        $previousLimit = $slab->income_limit ?? $previousLimit;
+    }
+
+    session([
+        'service_export' => [
+            'monthly_usd'  => round($monthlyUsd, 2),
+            'rate'         => round($rate, 2),
+            'monthly_lkr'  => round($monthlyLkr, 2),
+            'annual_lkr'   => round($annualGross, 2),
+            'tax'          => round($totalTax, 2),
+            'breakdown'    => $breakdown
+        ]
+    ]);
+
+    return back();
     }
 
     public function downloadPdf()

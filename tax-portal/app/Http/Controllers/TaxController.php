@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 class TaxController extends Controller
 {
@@ -90,6 +91,22 @@ public function annualTaxCalculate(Request $request)
     ]);
 
     return back();
+}
+public function downloadPdf()
+{
+    $annualTax = session('annual_tax');
+
+    if (!$annualTax) {
+        return redirect()->route('tax.annual');
+    }
+
+    $pdf = Pdf::loadView('pdf.annual-tax', [
+        'annual_income' => $annualTax['annual_income'],
+        'total_tax'     => $annualTax['total_tax'],
+        'breakdown'     => $annualTax['breakdown'],
+    ]);
+
+    return $pdf->download('Annual_Income_Tax_Report_2025_26.pdf');
 }
 
 }

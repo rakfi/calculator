@@ -1,144 +1,241 @@
 @extends('layouts.main')
 
-@section('title','Estimated Tax Calculation YA 2025/26')
+@section('title','Sri Lankan Estimated Tax Calculator')
 
 @section('content')
 <div class="container py-5">
+
+    <h2 class="text-center mb-5 fw-bold">
+        Sri Lankan Estimated Tax Calculator
+    </h2>
+
     <div class="row g-4">
 
-        <!-- LEFT SIDE : INPUT FORM -->
-        <div class="col-md-4">
-            <div class="card shadow-sm p-4">
-                <h5 class="fw-bold mb-3">
-                    Estimated Tax Calculator<br>
-                    <small class="text-muted">YA 2025/26</small>
-                </h5>
+        <!-- ================= INDIVIDUAL SECTION ================= -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Individual Estimated Tax</h5>
+                </div>
 
-                <form method="POST" action="{{ route('tax.estimated.calculate') }}">
-                    @csrf
+                <div class="card-body">
+                    <form method="POST" action="{{ route('tax.estimated.individual') }}">
+                        @csrf
 
-                    <!-- INCOME -->
-                    <h6 class="fw-bold mt-2">Income Details</h6>
+                        <h6 class="fw-bold text-primary mb-3">Income Information</h6>
 
-                    <label class="form-label small">Employment Income (LKR)</label>
-                    <input type="number" name="employment_income"
-                           class="form-control mb-2" value="0">
+                        <div class="mb-2">
+                            <label>Monthly Salary</label>
+                            <input type="number" name="salary" class="form-control">
+                        </div>
+                        <div class="mb-2">
+                            <label>Monthly Business Income</label>
+                            <input type="number" name="business_income" class="form-control">
+                        </div>
+                        <div class="mb-2">
+                            <label>Monthly Rent Income</label>
+                            <input type="number" id="rent_income" name="rent_income" class="form-control">
+                        </div>
+                        <div class="mb-2">
+                            <label>Monthly Other Investment Income</label>
+                            <input type="number" name="investment_income" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label>Monthly Other Income</label>
+                            <input type="number" name="other_income" class="form-control">
+                        </div>
 
-                    <label class="form-label small">Business / Professional Income</label>
-                    <input type="number" name="business_income"
-                           class="form-control mb-2" value="0">
+                        <hr>
 
-                    <label class="form-label small">Rent Income</label>
-                    <input type="number" name="rent_income"
-                           class="form-control mb-2" value="0">
+                        <h6 class="fw-bold text-success mb-3">Relief & Deductions</h6>
 
-                    <label class="form-label small">Other Income</label>
-                    <input type="number" name="other_income"
-                           class="form-control mb-3" value="0">
+                        <div class="mb-2">
+                            <label>Personal Relief (Max: 1,800,000)</label>
+                            <input type="number" name="personal_relief" class="form-control">
+                        </div>
+                        <div class="mb-2">
+                            <label>Solar Panel Relief (Max: 600,000)</label>
+                            <input type="number" name="solar_relief" class="form-control">
+                        </div>
+                        <div class="mb-2">
+                            <label>Approved Charity (Max: 75,000)</label>
+                            <input type="number" name="charity" class="form-control">
+                        </div>
+                        <div class="mb-2">
+                            <label>Other Government Donations</label>
+                            <input type="number" name="gov_donation" class="form-control">
+                        </div>
 
-                    <!-- RELIEFS -->
-                    <h6 class="fw-bold">Reliefs / Deductions</h6>
+                        <div class="mb-3">
+                            <label>Rent Relief (25% of Annual Rent Income)</label>
+                            <input type="text" id="rent_relief_display" class="form-control bg-light text-success fw-bold" readonly>
+                            <input type="hidden" name="rent_relief" id="rent_relief_hidden">
+                        </div>
 
-                    <label class="form-label small">EPF / ETF / Approved Provident</label>
-                    <input type="number" name="epf"
-                           class="form-control mb-2" value="0">
-
-                    <label class="form-label small">Life Insurance</label>
-                    <input type="number" name="insurance"
-                           class="form-control mb-2" value="0">
-
-                    <label class="form-label small">Medical Insurance</label>
-                    <input type="number" name="medical"
-                           class="form-control mb-2" value="0">
-
-                    <label class="form-label small">Approved Donations</label>
-                    <input type="number" name="donations"
-                           class="form-control mb-3" value="0">
-
-                    <button class="btn btn-dark w-100">
-                        Calculate Estimated Tax
-                    </button>
-                </form>
-
-                <div class="alert alert-light mt-4 small">
-                    <strong>Personal Relief:</strong> LKR 1,200,000<br>
-                    <strong>Tax System:</strong> Progressive Rates<br>
-                    <strong>Applies to:</strong> Individuals
+                        <button type="submit" class="btn btn-primary w-100">Calculate Individual Tax</button>
+                    </form>
                 </div>
             </div>
         </div>
 
-        <!-- RIGHT SIDE : RESULTS -->
-        @if(session('estimated_tax'))
-        <div class="col-md-8">
+        <!-- ================= CORPORATE SECTION ================= -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Corporate Estimated Tax</h5>
+                </div>
 
-            <!-- SUMMARY -->
-            <div class="card shadow-sm p-4 mb-4">
-                <h5 class="fw-bold">Tax Summary</h5>
+                <div class="card-body">
+                    <form method="POST" action="{{ route('tax.estimated.corporate') }}">
+                        @csrf
 
-                <div class="row text-center mt-3">
-                    <div class="col-md-4">
-                        <div class="p-3 bg-light rounded">
-                            <small>Gross Income</small>
-                            <h6>
-                                LKR {{ number_format(session('gross_income')) }}
-                            </h6>
+                        <h6 class="fw-bold mb-3">Company Income</h6>
+
+                        <div class="mb-3">
+                            <label>Monthly Company Profit</label>
+                            <input type="number" name="company_profit" class="form-control">
                         </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="p-3 bg-light rounded">
-                            <small>Taxable Income</small>
-                            <h6>
-                                LKR {{ number_format(session('taxable_income')) }}
-                            </h6>
+                        <div class="mb-3">
+                            <label>Monthly Other Investment Income</label>
+                            <input type="number" name="corp_investment_income" class="form-control">
                         </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="p-3 bg-light rounded">
-                            <small>Total Estimated Tax</small>
-                            <h6 class="text-danger">
-                                LKR {{ number_format(session('estimated_tax')) }}
-                            </h6>
+                        <div class="mb-3">
+                            <label>Monthly Other Income</label>
+                            <input type="number" name="corp_other_income" class="form-control">
                         </div>
-                    </div>
+
+                        <div class="alert alert-secondary">
+                            <strong>Corporate Income Tax:</strong> 30%<br>
+                            No relief deductions available
+                        </div>
+
+                        <button type="submit" class="btn btn-dark w-100">Calculate Corporate Tax</button>
+                    </form>
                 </div>
             </div>
+        </div>
 
-            <!-- BREAKDOWN -->
-            <div class="card shadow-sm p-4">
-                <h6 class="fw-bold mb-3">Tax Breakdown (Progressive)</h6>
+    </div>
 
-                <table class="table table-sm">
-                    <thead>
-                        <tr>
-                            <th>Rate</th>
-                            <th>Taxable Amount</th>
-                            <th>Tax</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach(session('breakdown') as $row)
-                        <tr>
-                            <td>{{ $row['rate'] }}%</td>
-                            <td>LKR {{ number_format($row['taxable']) }}</td>
-                            <td>LKR {{ number_format($row['tax']) }}</td>
-                        </tr>
-                        @endforeach
-                        <tr class="fw-bold">
-                            <td colspan="2">Total Estimated Tax</td>
-                            <td>
-                                LKR {{ number_format(session('estimated_tax')) }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+    <!-- ================= RESULTS ================= -->
+    <div class="row mt-5">
+
+        <!-- INDIVIDUAL RESULT -->
+        @if(session('estimated_individual_tax'))
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-dark text-white">
+                    Individual Tax Result
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <p><strong>Total Annual Income:</strong> LKR {{ number_format(session('estimated_individual_tax.annual_income'),2) }}</p>
+                        <p><strong>Total Relief:</strong> LKR {{ number_format(session('estimated_individual_tax.total_relief'),2) }}</p>
+                        <p><strong>Taxable Income:</strong> LKR {{ number_format(session('estimated_individual_tax.taxable_income'),2) }}</p>
+                        <p class="text-danger fw-bold">Total Annual Tax: LKR {{ number_format(session('estimated_individual_tax.total_tax'),2) }}</p>
+                    </div>
+
+                    @if(isset(session('estimated_individual_tax')['breakdown']))
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Income Range (LKR)</th>
+                                    <th>Rate (%)</th>
+                                    <th>Taxable Amount</th>
+                                    <th>Tax</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach(session('estimated_individual_tax')['breakdown'] as $slab)
+                                <tr>
+                                    <td>{{ $slab['range'] }}</td>
+                                    <td>{{ $slab['rate'] }}</td>
+                                    <td>{{ number_format($slab['taxable'],2) }}</td>
+                                    <td>{{ number_format($slab['tax'],2) }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    @endif
+
+                    <a href="{{ route('tax.estimated.individual.pdf') }}" class="btn btn-success mt-3 w-100">
+                        Download Individual Tax PDF
+                    </a>
+                </div>
             </div>
+        </div>
+        @endif
 
+        <!-- CORPORATE RESULT -->
+        @if(session('estimated_corporate_tax'))
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-dark text-white">
+                    Corporate Tax Result
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <p><strong>Total Annual Profit:</strong> LKR {{ number_format(session('estimated_corporate_tax.annual_income'),2) }}</p>
+                        <p class="text-danger fw-bold">Corporate Tax (30%): LKR {{ number_format(session('estimated_corporate_tax.total_tax'),2) }}</p>
+                    </div>
+
+                    @if(isset(session('estimated_corporate_tax')['breakdown']))
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Income Range (LKR)</th>
+                                    <th>Rate (%)</th>
+                                    <th>Taxable Amount</th>
+                                    <th>Tax</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach(session('estimated_corporate_tax')['breakdown'] as $slab)
+                                <tr>
+                                    <td>{{ $slab['range'] }}</td>
+                                    <td>{{ $slab['rate'] }}</td>
+                                    <td>{{ number_format($slab['taxable'],2) }}</td>
+                                    <td>{{ number_format($slab['tax'],2) }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    @endif
+
+                    <a href="{{ route('tax.estimated.corporate.pdf') }}" class="btn btn-success mt-3 w-100">
+                        Download Corporate Tax PDF
+                    </a>
+                </div>
+            </div>
         </div>
         @endif
 
     </div>
+
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const rentInput = document.getElementById('rent_income');
+    const rentReliefDisplay = document.getElementById('rent_relief_display');
+    const rentReliefHidden = document.getElementById('rent_relief_hidden');
+
+    function updateRentRelief() {
+        let monthlyRent = parseFloat(rentInput.value) || 0;
+        let annualRent = monthlyRent * 12;
+        let rentRelief = annualRent * 0.25;
+
+        rentReliefDisplay.value = rentRelief.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        rentReliefHidden.value = rentRelief.toFixed(2);
+    }
+
+    rentInput.addEventListener('input', updateRentRelief);
+    updateRentRelief();
+});
+</script>
+
 @endsection
