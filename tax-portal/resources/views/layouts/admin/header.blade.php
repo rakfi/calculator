@@ -12,8 +12,7 @@
             <!--begin::User Menu Dropdown-->
             <li class="nav-item dropdown user-menu">
               <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                
-                <span class="d-none d-md-inline">Admin User</span>
+                <span class="d-none d-md-inline">{{ auth()->user()->name }}</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                 <!--begin::User Image-->
@@ -24,16 +23,19 @@
                     alt="User Image"
                   />
                   <p>
-                    Alexander Pierce - Admin User
-                    <small>Member since Nov. 2023</small>
+                    {{ auth()->user()->name }}
+                    <small>{{ auth()->user()->email }}</small>
                   </p>
                 </li>
                 <!--end::User Image-->
                 
                 <!--begin::Menu Footer-->
                 <li class="user-footer">
-                  <a href="#" class="btn btn-default btn-flat">Profile</a>
-                  <a href="#" class="btn btn-default btn-flat float-end">Sign out</a>
+                  <a href="/profile" class="btn btn-default btn-flat">Profile</a>
+                  <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="btn btn-default btn-flat float-end" style="border: none; background: none; cursor: pointer;">Sign out</button>
+                  </form>
                 </li>
                 <!--end::Menu Footer-->
               </ul>
