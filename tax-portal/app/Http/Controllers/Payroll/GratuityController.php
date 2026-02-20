@@ -141,4 +141,4 @@ class GratuityController extends Controller
 
         return compact('last_month_salary', 'basic', 'service_years', 'months_payable', 'gratuity_amount', 'setting', 'input');
     }
-}
+} 
