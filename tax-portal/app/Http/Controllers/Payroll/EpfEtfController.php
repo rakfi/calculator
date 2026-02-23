@@ -16,24 +16,44 @@ class EpfEtfController extends Controller
     }
 
     public function calculate(Request $request)
-    {
-        $setting = EpfSetting::first();
-        $monthly_income = floatval($request->input('monthly_income', 0));
+{
+    $setting = EpfSetting::first();
 
-        $employee_rate = $setting->employee_rate ?? 0.08;
-        $employer_rate = $setting->employer_rate ?? 0.12;
-        $etf_rate = $setting->etf_rate ?? 0.03;
+    $monthly_income = floatval($request->input('monthly_income', 0));
 
-        $epf_employee = round($monthly_income * $employee_rate, 2);
-        $epf_employer = round($monthly_income * $employer_rate, 2);
-        $etf = round($monthly_income * $etf_rate, 2);
-        $net_salary = round($monthly_income - $epf_employee, 2);
+    // Safe defaults (Sri Lanka standard rates)
+    $employee_rate = $setting->employee_rate ?? 0.08;   // 8%
+    $employer_rate = $setting->employer_rate ?? 0.12;   // 12%
+    $etf_rate      = $setting->etf_rate ?? 0.03;        // 3%
 
-        $data = compact('monthly_income', 'employee_rate', 'employer_rate', 'etf_rate', 'epf_employee', 'epf_employer', 'etf', 'net_salary');
+    // Calculations
+    $epf_employee = round($monthly_income * $employee_rate, 2);
+    $epf_employer = round($monthly_income * $employer_rate, 2);
+    $etf          = round($monthly_income * $etf_rate, 2);
 
-        session(['epf_etf' => $data]);
-        return redirect()->route('tax.epf');
-    }
+    $total_employer_contribution = round($epf_employer + $etf, 2);
+
+    $net_salary = round($monthly_income - $epf_employee, 2);
+
+    $total_employer_cost = round($monthly_income + $total_employer_contribution, 2);
+
+    $data = compact(
+        'monthly_income',
+        'employee_rate',
+        'employer_rate',
+        'etf_rate',
+        'epf_employee',
+        'epf_employer',
+        'etf',
+        'total_employer_contribution',
+        'net_salary',
+        'total_employer_cost'
+    );
+
+    session(['epf_etf' => $data]);
+
+    return redirect()->route('tax.epf');
+}
 
     public function downloadPdfFromSession()
     {
@@ -52,13 +72,20 @@ class EpfEtfController extends Controller
     }
 
     public function settingsUpdate(Request $request)
-    {
-        $setting = EpfSetting::first();
-        if (! $setting) { $setting = new EpfSetting(); }
-        $setting->employee_rate = floatval($request->input('employee_rate', 0.08));
-        $setting->employer_rate = floatval($request->input('employer_rate', 0.12));
-        $setting->etf_rate = floatval($request->input('etf_rate', 0.03));
-        $setting->save();
-        return redirect()->route('admin.epf.settings')->with('success', 'EPF/ETF settings saved.');
+{
+    $setting = EpfSetting::first();
+    if (! $setting) {
+        $setting = new EpfSetting();
     }
+
+    // Convert percentage to decimal
+    $setting->employee_rate = floatval($request->employee_rate) / 100;
+    $setting->employer_rate = floatval($request->employer_rate) / 100;
+    $setting->etf_rate = floatval($request->etf_rate) / 100;
+
+    $setting->save();
+
+    return redirect()->route('admin.epf.settings')
+        ->with('success', 'EPF/ETF settings updated successfully.');
+}
 }

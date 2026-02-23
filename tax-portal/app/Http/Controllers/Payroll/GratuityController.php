@@ -121,24 +121,33 @@ class GratuityController extends Controller
     }
 
     protected function compute(array $input)
-    {
-        $setting = GratuitySetting::first();
-        if (! $setting) {
-            $setting = new GratuitySetting(['months_per_year' => 1.0, 'max_months' => 36, 'use_basic_only' => true]);
-        }
+{
+    $last_month_salary = floatval($input['last_month_salary'] ?? 0);
+    $basic = floatval($input['basic'] ?? 0);
 
-        $last_month_salary = floatval($input['last_month_salary'] ?? 0);
-        $basic = floatval($input['basic'] ?? 0);
-        $service_years = floatval($input['service_years'] ?? 0);
+    // Use last drawn salary (Sri Lanka rule)
+    $baseSalary = $last_month_salary;
 
-        $months_payable = $service_years * floatval($setting->months_per_year);
-        if ($setting->max_months > 0) {
-            $months_payable = min($months_payable, $setting->max_months);
-        }
+    // Only full completed years
+    $service_years = intval($input['service_years'] ?? 0);
 
-        $base = $setting->use_basic_only ? $basic : $last_month_salary;
-        $gratuity_amount = round($base * $months_payable, 2);
-
-        return compact('last_month_salary', 'basic', 'service_years', 'months_payable', 'gratuity_amount', 'setting', 'input');
+    // Minimum 5 years eligibility
+    if ($service_years < 5) {
+        $months_payable = 0;
+        $gratuity_amount = 0;
+    } else {
+        // Half month per completed year
+        $months_payable = $service_years * 0.5;
+        $gratuity_amount = round($baseSalary * $months_payable, 2);
     }
+
+    return [
+        'last_month_salary' => $last_month_salary,
+        'basic' => $basic,
+        'service_years' => $service_years,
+        'months_payable' => $months_payable,
+        'gratuity_amount' => $gratuity_amount,
+        'input' => $input,
+    ];
+}
 } 
