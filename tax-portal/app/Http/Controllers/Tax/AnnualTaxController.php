@@ -9,38 +9,51 @@ class AnnualTaxController extends Controller
 {
     public function annualTax()
     {
-        return view('tax.annual');
+        return view('tax.annual-tax');
     }
 
     public function annualTaxCalculate(Request $request)
     {
-        $annualIncome = $request->input('annual_income');
-        $deductions = $request->input('deductions', 0);
+        $annualIncome = (float) $request->input('annual_income', 0);
+        $deductions = (float) $request->input('deductions', 0);
 
-        $taxableIncome = $annualIncome - $deductions - 1500000; // Tax exemption
+        $taxableIncome = max(0, $annualIncome - $deductions - 1500000); // Tax exemption
+        $remaining = $taxableIncome;
+        $totalTax = 0;
+        $breakdown = [];
 
-        if ($taxableIncome <= 0) {
-            $tax = 0;
-        } else {
-            // Progressive rates for annual tax
-            if ($taxableIncome <= 1000000) {
-                $tax = $taxableIncome * 0.08;
-            } elseif ($taxableIncome <= 2000000) {
-                $tax = (1000000 * 0.08) + (($taxableIncome - 1000000) * 0.14);
-            } else {
-                $tax = (1000000 * 0.08) + (1000000 * 0.14) + (($taxableIncome - 2000000) * 0.20);
+        $slabs = [
+            ['width' => 1000000, 'rate' => 8],
+            ['width' => 1000000, 'rate' => 14],
+            ['width' => null, 'rate' => 20],
+        ];
+
+        foreach ($slabs as $slab) {
+            if ($remaining <= 0) {
+                break;
             }
-        }
 
-        $netIncome = $annualIncome - $deductions - $tax;
+            $taxableAtRate = $slab['width'] === null
+                ? $remaining
+                : min($remaining, $slab['width']);
+
+            $taxAtRate = $taxableAtRate * ($slab['rate'] / 100);
+            $totalTax += $taxAtRate;
+
+            $breakdown[] = [
+                'rate' => $slab['rate'],
+                'taxable' => $taxableAtRate,
+                'tax' => $taxAtRate,
+            ];
+
+            $remaining -= $taxableAtRate;
+        }
 
         session([
             'annual_tax' => [
-                'annualIncome' => $annualIncome,
-                'deductions' => $deductions,
-                'taxableIncome' => max(0, $taxableIncome),
-                'tax' => $tax,
-                'netIncome' => $netIncome,
+                'annual_income' => $annualIncome,
+                'total_tax' => $totalTax,
+                'breakdown' => $breakdown,
             ],
         ]);
 
@@ -50,6 +63,14 @@ class AnnualTaxController extends Controller
     public function downloadPdf()
     {
         $data = session('annual_tax', []);
+
+        $requiredKeys = ['annual_income', 'total_tax', 'breakdown'];
+        foreach ($requiredKeys as $key) {
+            if (!array_key_exists($key, $data)) {
+                return redirect()->route('tax.annual')->with('error', 'Please calculate first.');
+            }
+        }
+
         if (empty($data)) {
             return redirect()->route('tax.annual')->with('error', 'Please calculate first.');
         }

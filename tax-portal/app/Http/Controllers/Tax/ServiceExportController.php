@@ -14,18 +14,52 @@ class ServiceExportController extends Controller
 
     public function calculate(Request $request)
     {
-        $serviceValue = $request->input('service_value');
-        $withholdingRate = $request->input('withholding_rate', 0.05); // Default 5%
+        $monthlyUsd = (float) $request->input('monthly_usd', 0);
+        $rate = (float) $request->input('conversion_rate', 0);
 
-        $withholding = $serviceValue * $withholding_rate;
-        $netAmount = $serviceValue - $withholding;
+        $monthlyLkr = $monthlyUsd * $rate;
+        $annualLkr = $monthlyLkr * 12;
+
+        $remaining = $annualLkr;
+        $tax = 0;
+        $breakdown = [];
+
+        $slabs = [
+            ['range' => '0 - 500,000', 'width' => 500000, 'rate' => 5],
+            ['range' => '500,001 - 1,000,000', 'width' => 500000, 'rate' => 10],
+            ['range' => 'Above 1,000,000', 'width' => null, 'rate' => 5],
+        ];
+
+        foreach ($slabs as $slab) {
+            if ($remaining <= 0) {
+                break;
+            }
+
+            $taxableAtRate = $slab['width'] === null
+                ? $remaining
+                : min($remaining, $slab['width']);
+
+            $taxAtRate = $taxableAtRate * ($slab['rate'] / 100);
+            $tax += $taxAtRate;
+
+            $breakdown[] = [
+                'range' => $slab['range'],
+                'rate' => $slab['rate'],
+                'taxable' => $taxableAtRate,
+                'tax' => $taxAtRate,
+            ];
+
+            $remaining -= $taxableAtRate;
+        }
 
         session([
             'service_export' => [
-                'serviceValue' => $serviceValue,
-                'withholdingRate' => $withholdingRate * 100,
-                'withholding' => $withholding,
-                'netAmount' => $netAmount,
+                'monthly_usd' => $monthlyUsd,
+                'rate' => $rate,
+                'monthly_lkr' => $monthlyLkr,
+                'annual_lkr' => $annualLkr,
+                'tax' => $tax,
+                'breakdown' => $breakdown,
             ],
         ]);
 
@@ -35,11 +69,19 @@ class ServiceExportController extends Controller
     public function downloadPdf()
     {
         $data = session('service_export', []);
+
+        $requiredKeys = ['monthly_usd', 'rate', 'monthly_lkr', 'annual_lkr', 'tax', 'breakdown'];
+        foreach ($requiredKeys as $key) {
+            if (!array_key_exists($key, $data)) {
+                return redirect()->route('tax.service.exporter')->with('error', 'Please calculate first.');
+            }
+        }
+
         if (empty($data)) {
             return redirect()->route('tax.service.exporter')->with('error', 'Please calculate first.');
         }
 
-        $pdf = \PDF::loadView('tax.pdf.service-exporter', $data);
+        $pdf = \PDF::loadView('tax.pdf.service_exporter', ['data' => $data]);
         return $pdf->download('service-exporter.pdf');
     }
 

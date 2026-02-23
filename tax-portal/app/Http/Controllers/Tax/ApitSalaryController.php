@@ -14,37 +14,49 @@ class ApitSalaryController extends Controller
 
     public function calculate(Request $request)
     {
-        $grossSalary = $request->input('gross_salary');
-        $allowance = $request->input('allowance', 0);
+        $monthlyIncome = (float) $request->input('monthly_income', 0);
+        $annualIncome = $monthlyIncome * 12;
+        $taxableIncome = max(0, $annualIncome - 1200000); // Annual exemption threshold
 
-        $totalIncome = $grossSalary + $allowance;
-        $taxableIncome = $totalIncome - 1000000; // Tax exemption threshold
+        $remaining = $taxableIncome;
+        $annualTax = 0;
+        $breakdown = [];
 
-        if ($taxableIncome <= 0) {
-            $tax = 0;
-        } else {
-            // Sri Lankan APIT (for salary): Progressive tax rates
-            if ($taxableIncome <= 500000) {
-                $tax = $taxableIncome * 0.06;
-            } elseif ($taxableIncome <= 1000000) {
-                $tax = (500000 * 0.06) + (($taxableIncome - 500000) * 0.12);
-            } elseif ($taxableIncome <= 2000000) {
-                $tax = (500000 * 0.06) + (500000 * 0.12) + (($taxableIncome - 1000000) * 0.18);
-            } else {
-                $tax = (500000 * 0.06) + (500000 * 0.12) + (1000000 * 0.18) + (($taxableIncome - 2000000) * 0.24);
+        $slabs = [
+            ['width' => 500000, 'rate' => 6],
+            ['width' => 500000, 'rate' => 12],
+            ['width' => 1000000, 'rate' => 18],
+            ['width' => null, 'rate' => 24],
+        ];
+
+        foreach ($slabs as $slab) {
+            if ($remaining <= 0) {
+                break;
             }
-        }
 
-        $netIncome = $totalIncome - $tax;
+            $taxableAtRate = $slab['width'] === null
+                ? $remaining
+                : min($remaining, $slab['width']);
+
+            $taxAtRate = $taxableAtRate * ($slab['rate'] / 100);
+            $annualTax += $taxAtRate;
+
+            $breakdown[] = [
+                'rate' => $slab['rate'],
+                'taxable' => $taxableAtRate,
+                'tax' => $taxAtRate,
+            ];
+
+            $remaining -= $taxableAtRate;
+        }
 
         session([
             'apit_salary' => [
-                'grossSalary' => $grossSalary,
-                'allowance' => $allowance,
-                'totalIncome' => $totalIncome,
-                'tax' => $tax,
-                'netIncome' => $netIncome,
-                'taxableIncome' => max(0, $taxableIncome),
+                'monthly_income' => $monthlyIncome,
+                'annual_income' => $annualIncome,
+                'annual_tax' => $annualTax,
+                'monthly_tax' => $annualTax / 12,
+                'breakdown' => $breakdown,
             ],
         ]);
 

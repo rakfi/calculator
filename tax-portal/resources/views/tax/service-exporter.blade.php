@@ -106,7 +106,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach(session('service_export.breakdown') as $row)
+                        @foreach(session('service_export.breakdown', []) as $row)
                         <tr>
                             <td>{{ $row['range'] }}</td>
                             <td>{{ $row['rate'] }}%</td>

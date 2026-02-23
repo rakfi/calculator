@@ -14,18 +14,18 @@ class VatController extends Controller
 
     public function calculate(Request $request)
     {
-        $amount = $request->input('amount');
-        $vatRate = 0.15; // 15% VAT in Sri Lanka
+        $amount = (float) $request->input('amount', 0);
+        $vatRate = (float) $request->input('vat_rate', 15);
 
-        $vat = $amount * $vatRate;
-        $total = $amount + $vat;
+        $vatAmount = $amount * ($vatRate / 100);
+        $totalAmount = $amount + $vatAmount;
 
         session([
-            'vat' => [
+            'vat_calculation' => [
                 'amount' => $amount,
-                'vatRate' => $vatRate * 100,
-                'vat' => $vat,
-                'total' => $total,
+                'vat_rate' => $vatRate,
+                'vat_amount' => $vatAmount,
+                'total_amount' => $totalAmount,
             ],
         ]);
 
@@ -34,12 +34,20 @@ class VatController extends Controller
 
     public function downloadPdf()
     {
-        $data = session('vat', []);
+        $data = session('vat_calculation', []);
+
+        $requiredKeys = ['amount', 'vat_rate', 'vat_amount', 'total_amount'];
+        foreach ($requiredKeys as $key) {
+            if (!array_key_exists($key, $data)) {
+                return redirect()->route('tax.vat')->with('error', 'Please calculate first.');
+            }
+        }
+
         if (empty($data)) {
             return redirect()->route('tax.vat')->with('error', 'Please calculate first.');
         }
 
-        $pdf = \PDF::loadView('tax.pdf.vat', $data);
+        $pdf = \PDF::loadView('tax.pdf.vat-report', $data);
         return $pdf->download('vat-calculation.pdf');
     }
 }

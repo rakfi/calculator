@@ -77,7 +77,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach(session('annual_tax.breakdown') as $row)
+                            @foreach(session('annual_tax.breakdown', []) as $row)
                             <tr>
                                 <td>{{ $row['rate'] }}%</td>
                                 <td>LKR {{ number_format($row['taxable']) }}</td>
