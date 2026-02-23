@@ -3,16 +3,16 @@
         <!--begin::Sidebar Brand-->
         <div class="sidebar-brand">
           <!--begin::Brand Link-->
-          <a href="../index.html" class="brand-link">
+          <a href="{{ route('admin.dashboard') }}" class="brand-link">
             <!--begin::Brand Image-->
             <img
-              src="../assets/img/AdminLTELogo.png"
-              alt="Logo"
+              src="{{ asset('assets/images/logo.png') }}"
+              alt="Site Logo"
               class="brand-image opacity-75 shadow"
             />
             <!--end::Brand Image-->
             <!--begin::Brand Text-->
-            <span class="brand-text fw-light">Admin</span>
+            <span class="brand-text fw-light">Siyenro</span>
             <!--end::Brand Text-->
           </a>
           <!--end::Brand Link-->

@@ -47,6 +47,29 @@ class PayrollController extends Controller
         return $pdf->download('salary_slip.pdf');
     }
 
+    // Admin settings: show edit form
+    public function settingsEdit()
+    {
+        $setting = SalarySlipSetting::first();
+        return view('admin.calculators.salary_slip', compact('setting'));
+    }
+
+    // Admin settings: update settings
+    public function settingsUpdate(Request $request)
+    {
+        $setting = SalarySlipSetting::first();
+        if (!$setting) {
+            $setting = new SalarySlipSetting();
+        }
+
+        // Convert percentage (0-100) to decimal (0-1)
+        $setting->monthly_tax_threshold = floatval($request->input('monthly_tax_threshold', 50000));
+        $setting->monthly_tax_rate = floatval($request->input('monthly_tax_rate', 10)) / 100;
+        $setting->save();
+
+        return redirect()->route('admin.salary_slip.settings')->with('success', 'Salary slip settings updated.');
+    }
+
     // Compute salary data
     protected function computeData(array $input)
     {

@@ -8,6 +8,7 @@ use App\Http\Controllers\Tax\EstimatedTaxController;
 use App\Http\Controllers\Tax\ServiceExportController;
 use App\Http\Controllers\Tax\VatController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 // Public pages
 Route::get('/', fn() => view('home'))->name('home');
@@ -18,8 +19,14 @@ Route::get('/news', fn() => view('news'))->name('news');
 Route::get('/downloads', fn() => view('downloads'))->name('downloads');
 Route::get('/contact', fn() => view('contact'))->name('contact');
 
+// Admin login (separate from user login)
+Route::middleware('guest')->group(function () {
+    Route::get('/admin/login', [AuthenticatedSessionController::class, 'createAdmin'])->name('admin.login');
+    Route::post('/admin/login', [AuthenticatedSessionController::class, 'storeAdmin'])->name('admin.login.store');
+});
+
 // Admin routes - Protected with auth middleware
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/admin', fn() => view('admin.dashboard'))->name('dashboard');
     Route::get('/admin/dashboard', fn() => view('admin.dashboard'))->name('admin.dashboard');
     

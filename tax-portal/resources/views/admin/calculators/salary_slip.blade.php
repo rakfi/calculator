@@ -8,7 +8,7 @@
     <h4 class="fw-bold mb-4">Salary Slip Settings</h4>
 
     <div class="alert alert-info small">
-        Configure statutory payroll settings for Sri Lanka salary slip generation.
+        Configure the tax calculation thresholds and rates for salary slip generation.
     </div>
 
     @if(session('success'))
@@ -20,33 +20,22 @@
 
         <div class="row g-3">
 
-            <!-- EPF Rate -->
-            <div class="col-md-4">
-                <label class="form-label">Employee EPF Rate (%)</label>
+            <!-- Monthly Tax Threshold -->
+            <div class="col-md-6">
+                <label class="form-label">Monthly Tax Threshold (LKR)</label>
                 <input type="number"
                        step="0.01"
                        min="0"
-                       max="100"
-                       name="epf_employee_rate"
-                       class="form-control"
-                       value="{{ ($setting->epf_employee_rate ?? 0.08) * 100 }}"
-                       required>
-            </div>
-
-            <!-- APIT Threshold -->
-            <div class="col-md-4">
-                <label class="form-label">Monthly APIT Threshold (LKR)</label>
-                <input type="number"
-                       step="0.01"
                        name="monthly_tax_threshold"
                        class="form-control"
-                       value="{{ $setting->monthly_tax_threshold ?? 100000 }}"
+                       value="{{ $setting->monthly_tax_threshold ?? 50000 }}"
                        required>
+                <small class="form-text text-muted">Amount above which monthly tax is calculated</small>
             </div>
 
-            <!-- APIT Rate -->
-            <div class="col-md-4">
-                <label class="form-label">APIT Rate (%)</label>
+            <!-- Monthly Tax Rate -->
+            <div class="col-md-6">
+                <label class="form-label">Monthly Tax Rate (%)</label>
                 <input type="number"
                        step="0.01"
                        min="0"
@@ -55,6 +44,7 @@
                        class="form-control"
                        value="{{ ($setting->monthly_tax_rate ?? 0.10) * 100 }}"
                        required>
+                <small class="form-text text-muted">Tax rate applied to income above threshold</small>
             </div>
 
             <div class="col-12 mt-3">

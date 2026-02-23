@@ -30,9 +30,25 @@
                         <li><a class="dropdown-item {{ request()->routeIs('downloads') ? 'active fw-bold' : '' }}" href="{{ route('downloads') }}">Downloads</a></li>
                     </ul>
                 </li>
+                @guest
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('login') ? 'active fw-bold' : '' }}" href="{{ route('login') }}">Login</a>
                 </li>
+                @else
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">{{ auth()->user()->name }}</a>
+                    <ul class="dropdown-menu shadow-sm">
+                        <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profile Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                                @csrf
+                                <button type="submit" class="dropdown-item">Logout</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+                @endguest
                 <li class="nav-item">
                     <a class="btn btn-dark rounded-pill px-4 contact-btn" href="{{ route('contact') }}">Contact</a>
                 </li>

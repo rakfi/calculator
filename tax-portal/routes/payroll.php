@@ -33,7 +33,7 @@ Route::post('/tax/epf-etf/calculate', [EpfEtfController::class, 'calculate'])->n
 Route::get('/tax/epf-etf/pdf', [EpfEtfController::class, 'downloadPdfFromSession'])->name('tax.epf.pdf');
 
 // Admin settings for salary slip
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/admin/calculators/salary_slip', [PayrollController::class, 'settingsEdit'])->name('admin.salary_slip.settings');
     Route::post('/admin/calculators/salary_slip', [PayrollController::class, 'settingsUpdate'])->name('admin.salary_slip.settings.update');
 
