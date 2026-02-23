@@ -12,7 +12,22 @@
         </div>
     </div>
 
-    @include('payroll.pdf.salary-slip')
+    @php
+        // Prepare all fields expected by the PDF view
+        $pdfData = [
+            'basic' => $slip->basic ?? 0,
+            'allowances' => $slip->allowances ?? 0,
+            'other' => $slip->other ?? 0,
+            'gross' => $slip->gross ?? ($slip->basic + $slip->allowances + $slip->other),
+            'epf' => $slip->epf ?? 0,
+            'etf' => $slip->etf ?? 0,
+            'apit' => $slip->apit ?? 0,
+            'total_deductions' => $slip->total_deductions ?? ($slip->epf + $slip->apit),
+            'net' => $slip->net ?? (($slip->basic + $slip->allowances + $slip->other) - ($slip->epf + $slip->apit)),
+        ];
+    @endphp
+
+    @include('payroll.pdf.salary-slip', $pdfData)
 
 </div>
 @endsection

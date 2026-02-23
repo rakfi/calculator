@@ -12,4 +12,4 @@ class EpfSetting extends Model
     protected $table = 'epf_settings';
 
     protected $fillable = ['employee_rate', 'employer_rate', 'etf_rate'];
-}
+} 

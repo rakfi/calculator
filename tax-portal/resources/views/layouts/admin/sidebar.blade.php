@@ -94,15 +94,15 @@
                       <p>EPF / ETF Calculator</p>
                     </a>
                   </li>
-                  <li class="nav-item">
+                  <!-- <li class="nav-item">
                     <a href="/admin/calculators/gratuity" class="nav-link">
                       <i class="nav-icon bi bi-circle"></i>
                       <p>Gratuity Calculator</p>
                     </a>
-                  </li>
+                  </li> -->
                 </ul>
               </li>
-              
+               
             
             </ul>
             <!--end::Sidebar Menu-->

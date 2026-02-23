@@ -18,45 +18,31 @@ class ApitSalaryController extends Controller
         $annualIncome = $monthlyIncome * 12;
         $taxableIncome = max(0, $annualIncome - 1200000); // Annual exemption threshold
 
-        $remaining = $taxableIncome;
-        $annualTax = 0;
-        $breakdown = [];
-
-        $slabs = [
-            ['width' => 500000, 'rate' => 6],
-            ['width' => 500000, 'rate' => 12],
-            ['width' => 1000000, 'rate' => 18],
-            ['width' => null, 'rate' => 24],
-        ];
-
-        foreach ($slabs as $slab) {
-            if ($remaining <= 0) {
-                break;
+        if ($taxableIncome <= 0) {
+            $tax = 0;
+        } else {
+            // Sri Lankan APIT (for salary): Progressive tax rates
+            if ($taxableIncome <= 500000) {
+                $tax = $taxableIncome * 0.06;
+            } elseif ($taxableIncome <= 1000000) {
+                $tax = (500000 * 0.06) + (($taxableIncome - 500000) * 0.12);
+            } elseif ($taxableIncome <= 2000000) {
+                $tax = (500000 * 0.06) + (500000 * 0.12) + (($taxableIncome - 1000000) * 0.18);
+            } else {
+                $tax = (500000 * 0.06) + (500000 * 0.12) + (1000000 * 0.18) + (($taxableIncome - 2000000) * 0.24);
             }
-
-            $taxableAtRate = $slab['width'] === null
-                ? $remaining
-                : min($remaining, $slab['width']);
-
-            $taxAtRate = $taxableAtRate * ($slab['rate'] / 100);
-            $annualTax += $taxAtRate;
-
-            $breakdown[] = [
-                'rate' => $slab['rate'],
-                'taxable' => $taxableAtRate,
-                'tax' => $taxAtRate,
-            ];
-
-            $remaining -= $taxableAtRate;
         }
+
+        $netIncome = $totalIncome - $tax;
 
         session([
             'apit_salary' => [
-                'monthly_income' => $monthlyIncome,
-                'annual_income' => $annualIncome,
-                'annual_tax' => $annualTax,
-                'monthly_tax' => $annualTax / 12,
-                'breakdown' => $breakdown,
+                'grossSalary' => $grossSalary,
+                'allowance' => $allowance,
+                'totalIncome' => $totalIncome,
+                'tax' => $tax,
+                'netIncome' => $netIncome,
+                'taxableIncome' => max(0, $taxableIncome),
             ],
         ]);
 
